@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kogi State Senior Secondary Education Board (KGSSEB) - Official Website</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; }
+    :root {
+      --primary-green: #0A5D2A;
+      --light-green: #F0FFF4;
+      --dark-green: #043A1A;
+    }
+    .carousel-slide {
+      transition: opacity 1s ease-in-out;
+    }
+    .btn-primary {
+      background-color: var(--primary-green);
+      transition: background-color 0.3s;
+    }
+    .btn-primary:hover { background-color: var(--dark-green); }
+    .btn-secondary {
+      border-color: white;
+      color: white;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .btn-secondary:hover {
+      background-color: white;
+      color: var(--primary-green);
+    }
+    .header-shadow {
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Header -->
+  <header class="bg-white sticky top-0 z-50 header-shadow">
+    <div class="container mx-auto px-4 lg:px-8">
+      <nav class="flex items-center justify-between py-4">
+        <div class="flex items-center space-x-3">
+          <img src="https://app.kgsseb.kogistate.gov.ng/assets/img/logo.jpg" alt="Kogi State Logo" class="w-14">
+          <div class="hidden sm:block">
+            <h1 class="font-bold text-lg text-[var(--dark-green)]">Kogi State</h1>
+            <p class="text-sm text-gray-600">Senior Secondary Education Board</p>
+          </div>
+        </div>
+        <a href="https://app.kgsseb.kogistate.gov.ng/signin" target="_blank" class="btn-primary text-white font-semibold px-5 py-2.5 rounded-lg text-sm">
+          Portal Login
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Carousel -->
+    <section id="hero-carousel" class="relative w-full h-[70vh] md:h-[90vh] overflow-hidden text-white">
+      <!-- Slides (images 1–5) -->
+      <div class="carousel-slide absolute top-0 left-0 w-full h-full bg-cover bg-center"
+           style="background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('images/image_1.jpg');">
+        <div class="container mx-auto px-4 lg:px-8 h-full flex flex-col justify-center items-center text-center">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4">Transforming Secondary Education in Kogi State</h1>
+          <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200">The official hub for data management, resources, and news for all secondary schools.</p>
+        </div>
+      </div>
+
+      <div class="carousel-slide absolute top-0 left-0 w-full h-full bg-cover bg-center opacity-0"
+           style="background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('images/image_2.jpg');">
+        <div class="container mx-auto px-4 lg:px-8 h-full flex flex-col justify-center items-center text-center">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4">Data-Driven Excellence in Education</h1>
+          <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200">Utilizing modern technology to enhance school administration and student performance.</p>
+        </div>
+      </div>
+
+      <div class="carousel-slide absolute top-0 left-0 w-full h-full bg-cover bg-center opacity-0"
+           style="background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('images/image_3.jpg');">
+        <div class="container mx-auto px-4 lg:px-8 h-full flex flex-col justify-center items-center text-center">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4">Commitment to Quality Learning</h1>
+          <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200">Fostering innovation, growth, and academic achievement for all.</p>
+        </div>
+      </div>
+
+      <div class="carousel-slide absolute top-0 left-0 w-full h-full bg-cover bg-center opacity-0"
+           style="background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('images/image_4.jpg');">
+        <div class="container mx-auto px-4 lg:px-8 h-full flex flex-col justify-center items-center text-center">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4">Building a Brighter Future</h1>
+          <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200">Investing in infrastructure and teacher empowerment.</p>
+        </div>
+      </div>
+
+      <div class="carousel-slide absolute top-0 left-0 w-full h-full bg-cover bg-center opacity-0"
+           style="background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('images/image_5.jpg');">
+        <div class="container mx-auto px-4 lg:px-8 h-full flex flex-col justify-center items-center text-center">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4">Empowering Future Leaders</h1>
+          <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200">Preparing the next generation for global opportunities.</p>
+        </div>
+      </div>
+
+      <!-- CTA + Indicators -->
+      <div class="absolute bottom-0 left-0 w-full flex flex-col justify-end items-center pb-10">
+        <div class="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-6">
+          <a href="https://app.kgsseb.kogistate.gov.ng/signin" target="_blank"
+             class="btn-primary font-semibold px-8 py-3 rounded-lg w-52 text-center sm:w-auto">
+            Access Centralized Database →
+          </a>
+          <a href="#about" class="btn-secondary border-2 font-semibold px-8 py-3 rounded-lg w-52 text-center sm:w-auto">
+            Learn More
+          </a>
+        </div>
+        <div class="flex space-x-3" id="carousel-indicators"></div>
+      </div>
+    </section>
+
+    <!-- Learn More Section -->
+    <section id="learn-more" class="bg-white py-16">
+      <div class="container mx-auto px-4 lg:px-8">
+        <h2 class="text-3xl md:text-4xl font-bold text-[var(--dark-green)] text-center mb-8">The Power of a Centralized Database</h2>
+        <div class="max-w-4xl mx-auto text-gray-700 space-y-6">
+          <p class="text-lg">
+            A centralized database is the backbone of efficient and effective education management. By consolidating data from all secondary schools across Kogi State, the Kogi State Senior Secondary Education Board (KGSSEB) ensures seamless access to critical information, enabling data-driven decisions that transform the educational landscape.
+          </p>
+          <h3 class="text-2xl font-semibold text-[var(--primary-green)]">Key Benefits</h3>
+          <ul class="list-disc pl-6 space-y-2">
+            <li><strong>Advanced Resource Planning:</strong> A centralized system allows for precise allocation of resources such as teachers, classrooms, and learning materials, ensuring equitable distribution and optimal utilization across schools.</li>
+            <li><strong>Improved Decision-Making:</strong> Real-time access to student and school performance data empowers administrators to identify trends, address challenges, and implement targeted interventions.</li>
+            <li><strong>Enhanced Transparency:</strong> Centralized data promotes accountability by providing stakeholders with clear insights into school operations, funding, and academic outcomes.</li>
+            <li><strong>Streamlined Administration:</strong> Automating administrative tasks reduces paperwork, minimizes errors, and frees up time for educators to focus on teaching and student development.</li>
+            <li><strong>Scalable Growth:</strong> A unified database supports future expansion, enabling the integration of new schools, programs, and technologies with ease.</li>
+          </ul>
+          <p class="text-lg">
+            By leveraging a centralized database, KGSSEB is paving the way for a modern, efficient, and inclusive education system that empowers students, educators, and administrators alike.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Acknowledgment Section -->
+    <section id="acknowledgment" class="bg-[var(--light-green)] py-12">
+      <div class="container mx-auto px-4 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-[var(--dark-green)] mb-6">Our Gratitude</h2>
+        <p class="max-w-3xl mx-auto text-lg text-gray-700">
+          We extend our heartfelt gratitude to the Kogi State Senior Secondary Education Board for their visionary leadership and unwavering commitment to advancing education through this transformative project. Their initiative to develop a centralized database and digital platform marks a significant step toward a brighter future for secondary education in Kogi State. Thank you for driving innovation and excellence in our schools.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-[var(--dark-green)] text-white py-12">
+    <div class="container mx-auto px-4 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Kogi State Senior Secondary Education Board</h3>
+          <p class="text-sm text-gray-300">
+            Committed to transforming secondary education through innovation, data-driven decisions, and inclusive growth.
+          </p>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+          <ul class="space-y-2 text-sm">
+            <li><a href="https://app.kgsseb.kogistate.gov.ng/signin" target="_blank" class="hover:text-[var(--light-green)] transition-colors">Centralized Database Login</a></li>
+            <li><a href="#about" class="hover:text-[var(--light-green)] transition-colors">About Us</a></li>
+            <li><a href="#learn-more" class="hover:text-[var(--light-green)] transition-colors">Learn More</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
+          <p class="text-sm text-gray-300">
+            Kogi State Senior Secondary Education Board<br>
+            Lokoja, Kogi State, Nigeria<br>
+            Email: <a href="mailto:support@kgsseb.kogistate.gov.ng" class="hover:text-[var(--light-green)] transition-colors">support@kgsseb.kogistate.gov.ng</a>
+          </p>
+        </div>
+      </div>
+      <div class="mt-8 pt-8 border-t border-gray-700 text-center">
+        <p class="text-sm text-gray-400">
+          &copy; 2025 Kogi State Senior Secondary Education Board. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Hero Carousel
+    document.addEventListener("DOMContentLoaded", function () {
+      const slides = document.querySelectorAll("#hero-carousel .carousel-slide");
+      const indicatorContainer = document.getElementById("carousel-indicators");
+      let currentSlide = 0;
+      const slideInterval = 5000;
+
+      // Create indicators dynamically
+      slides.forEach((_, i) => {
+        const btn = document.createElement("button");
+        btn.className = "w-3 h-3 bg-white rounded-full opacity-50";
+        btn.addEventListener("click", () => showSlide(i));
+        indicatorContainer.appendChild(btn);
+      });
+
+      const indicators = indicatorContainer.querySelectorAll("button");
+
+      function showSlide(index) {
+        slides.forEach((slide, i) => {
+          slide.style.opacity = i === index ? "1" : "0";
+        });
+        indicators.forEach((ind, i) => {
+          ind.style.opacity = i === index ? "1" : "0.5";
+        });
+        currentSlide = index;
+      }
+
+      function nextSlide() {
+        let newSlide = (currentSlide + 1) % slides.length;
+        showSlide(newSlide);
+      }
+
+      setInterval(nextSlide, slideInterval);
+      showSlide(0);
+    });
+  </script>
+</body>
+</html>

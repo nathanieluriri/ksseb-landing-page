@@ -10,12 +10,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', sans-serif; }
+    body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
     :root {
       --primary-green: #0A5D2A;
       --light-green: #F0FFF4;
       --dark-green: #043A1A;
+      --accent-gold: #D4AF37;
     }
+    
+    /* Animations */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease-out;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .carousel-slide {
       transition: opacity 1s ease-in-out;
     }
@@ -24,160 +37,437 @@
       transition: background-color 0.3s;
     }
     .btn-primary:hover { background-color: var(--dark-green); }
-    .btn-secondary {
-      border-color: white;
-      color: white;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    .btn-secondary:hover {
-      background-color: white;
-      color: var(--primary-green);
-    }
+    
     .header-shadow {
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
     }
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* --- Advanced CSS Tree Logic --- */
+    .tree {
+        display: flex;
+        justify-content: center;
+        padding-top: 20px;
+    }
+    .tree ul {
+        padding-top: 20px; position: relative;
+        transition: all 0.5s;
+        display: flex;
+        justify-content: center;
+    }
+    .tree li {
+        float: left; text-align: center;
+        list-style-type: none;
+        position: relative;
+        padding: 20px 10px 0 10px;
+    }
+    /* Connectors */
+    .tree li::before, .tree li::after {
+        content: ''; position: absolute; top: 0; right: 50%;
+        border-top: 2px solid #ccc; width: 50%; height: 20px;
+    }
+    .tree li::after {
+        right: auto; left: 50%; border-left: 2px solid #ccc;
+    }
+    .tree li:only-child::after, .tree li:only-child::before {
+        display: none;
+    }
+    .tree li:only-child { padding-top: 0;}
+    .tree li:first-child::before, .tree li:last-child::after {
+        border: 0 none;
+    }
+    .tree li:last-child::before{
+        border-right: 2px solid #ccc;
+        border-radius: 0 5px 0 0;
+    }
+    .tree li:first-child::after{
+        border-radius: 5px 0 0 0;
+    }
+    .tree ul ul::before{
+        content: ''; position: absolute; top: 0; left: 50%;
+        border-left: 2px solid #ccc; width: 0; height: 20px;
+    }
+    
+    /* Box Styles */
+    .org-box {
+        border: 1px solid #ccc;
+        padding: 8px 6px;
+        display: inline-block;
+        border-radius: 4px;
+        background: white;
+        font-weight: 600;
+        font-size: 0.75rem;
+        min-width: 100px;
+        max-width: 160px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        z-index: 10;
+        position: relative;
+    }
+    .org-root { background: var(--dark-green); color: white; border: none; font-size: 0.9rem; padding: 12px 20px; }
+    .org-board { background: white; border: 2px solid var(--dark-green); color: var(--dark-green); }
+    .org-dept { background: var(--primary-green); color: white; border: none; min-height: 50px; display: flex; align-items: center; justify-content: center; }
+    .org-unit { background: #f9fafb; font-weight: 500; font-size: 0.7rem; }
+    
+    /* Vertical Stack for Right Column */
+    .vertical-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding-top: 20px;
+        position: relative;
+    }
+    /* Special connector for vertical stack */
+    .vertical-stack::before {
+        content: ''; position: absolute; top: 0; left: 50%;
+        border-left: 2px solid #ccc; height: 100%; width: 0;
+        z-index: 0;
+    }
+    .vertical-stack .org-box { z-index: 1; }
+
   </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 text-gray-800">
 
-  <!-- Header -->
   <header class="bg-white sticky top-0 z-50 header-shadow">
     <div class="container mx-auto px-4 lg:px-8">
       <nav class="flex items-center justify-between py-4">
         <div class="flex items-center space-x-3">
-          <img src="https://app.kgsseb.kogistate.gov.ng/assets/img/logo.jpg" alt="Kogi State Logo" class="w-14">
+          <img src="/images/logo.jpg" alt="Kogi State Logo" class="w-14">
           <div class="hidden sm:block">
             <h1 class="font-bold text-lg text-[var(--dark-green)]">Kogi State</h1>
             <p class="text-sm text-gray-600">Senior Secondary Education Board</p>
           </div>
         </div>
-        <a href="https://app.kgsseb.kogistate.gov.ng/signin" target="_blank" class="btn-primary text-white font-semibold px-5 py-2.5 rounded-lg text-sm">
-          Portal Login
-        </a>
+        <div class="flex items-center gap-4">
+            <a href="#about" class="hidden md:block text-sm font-medium text-gray-600 hover:text-[var(--primary-green)] transition">About</a>
+            <a href="#management" class="hidden md:block text-sm font-medium text-gray-600 hover:text-[var(--primary-green)] transition">Management</a>
+            <a href="#departments" class="hidden md:block text-sm font-medium text-gray-600 hover:text-[var(--primary-green)] transition">Departments</a>
+            <a href="https://app.kgsseb.kogistate.gov.ng/signin" target="_blank" class="btn-primary text-white font-semibold px-5 py-2.5 rounded-lg text-sm">
+            Portal Login
+            </a>
+        </div>
       </nav>
     </div>
   </header>
 
   <main>
-    <!-- Hero Carousel -->
-    <section id="hero-carousel" class="relative w-full h-[70vh] md:h-[90vh] overflow-hidden text-white">
-      <!-- Slides (images 1–5) -->
+    <section id="hero-carousel" class="relative w-full h-[70vh] md:h-[85vh] overflow-hidden text-white">
       <div class="carousel-slide absolute top-0 left-0 w-full h-full bg-cover bg-center"
-           style="background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('images/image_1.jpg');">
+           style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('images/image_1.jpg');">
         <div class="container mx-auto px-4 lg:px-8 h-full flex flex-col justify-center items-center text-center">
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4">Transforming Secondary Education in Kogi State</h1>
-          <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200">The official hub for data management, resources, and news for all secondary schools.</p>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 leading-tight">Strategic Leadership in Education</h1>
+          <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200">
+            Managing, regulating, and developing senior secondary education across Kogi State.
+          </p>
         </div>
       </div>
 
       <div class="carousel-slide absolute top-0 left-0 w-full h-full bg-cover bg-center opacity-0"
-           style="background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('images/image_2.jpg');">
+           style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('images/image_2.jpg');">
         <div class="container mx-auto px-4 lg:px-8 h-full flex flex-col justify-center items-center text-center">
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4">Data-Driven Excellence in Education</h1>
-          <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200">Utilizing modern technology to enhance school administration and student performance.</p>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 leading-tight">Nurturing Critical Thinkers</h1>
+          <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200">
+            Building a vibrant, inclusive, and high-performing school system for responsible citizens.
+          </p>
         </div>
       </div>
 
       <div class="carousel-slide absolute top-0 left-0 w-full h-full bg-cover bg-center opacity-0"
-           style="background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('images/image_3.jpg');">
+           style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('images/image_3.jpg');">
         <div class="container mx-auto px-4 lg:px-8 h-full flex flex-col justify-center items-center text-center">
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4">Commitment to Quality Learning</h1>
-          <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200">Fostering innovation, growth, and academic achievement for all.</p>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 leading-tight">Data-Driven Planning</h1>
+          <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200">
+            Utilizing centralized databases and research to formulate effective educational policies.
+          </p>
         </div>
       </div>
 
-      <div class="carousel-slide absolute top-0 left-0 w-full h-full bg-cover bg-center opacity-0"
-           style="background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('images/image_4.jpg');">
-        <div class="container mx-auto px-4 lg:px-8 h-full flex flex-col justify-center items-center text-center">
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4">Building a Brighter Future</h1>
-          <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200">Investing in infrastructure and teacher empowerment.</p>
-        </div>
-      </div>
-
-      <div class="carousel-slide absolute top-0 left-0 w-full h-full bg-cover bg-center opacity-0"
-           style="background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('images/image_5.jpg');">
-        <div class="container mx-auto px-4 lg:px-8 h-full flex flex-col justify-center items-center text-center">
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4">Empowering Future Leaders</h1>
-          <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-200">Preparing the next generation for global opportunities.</p>
-        </div>
-      </div>
-
-      <!-- CTA + Indicators -->
       <div class="absolute bottom-0 left-0 w-full flex flex-col justify-end items-center pb-10">
         <div class="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-6">
           <a href="https://app.kgsseb.kogistate.gov.ng/signin" target="_blank"
-             class="btn-primary font-semibold px-8 py-3 rounded-lg w-52 text-center sm:w-auto">
+             class="btn-primary font-semibold px-8 py-3 rounded-lg w-52 text-center sm:w-auto border border-transparent hover:border-white">
             Access Database →
           </a>
-          
         </div>
         <div class="flex space-x-3" id="carousel-indicators"></div>
       </div>
     </section>
 
-    <!-- Learn More Section -->
-    <section id="learn-more" class="bg-white py-16">
+    <section id="about" class="bg-white py-16">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="text-center mb-12 fade-up">
+                <span class="text-[var(--primary-green)] font-semibold tracking-wide uppercase text-sm">Who We Are</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-[var(--dark-green)] mt-2">Kogi State Senior Secondary Education Board</h2>
+                <div class="w-24 h-1 bg-[var(--primary-green)] mx-auto mt-4 rounded"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-50 p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition fade-up">
+                    <div class="w-12 h-12 bg-[var(--light-green)] rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-[var(--dark-green)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Our Mandate </h3>
+                    <p class="text-gray-600 leading-relaxed text-sm">
+                        KGSSEB is established to provide strategic leadership, plan, coordinate, and monitor senior secondary education. We formulate policies, oversee administration, and collaborate with stakeholders to enhance service delivery.
+                    </p>
+                </div>
+
+                <div class="bg-gray-50 p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition fade-up" style="transition-delay: 100ms;">
+                    <div class="w-12 h-12 bg-[var(--light-green)] rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-[var(--dark-green)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Our Vision </h3>
+                    <p class="text-gray-600 leading-relaxed text-sm">
+                        To build a vibrant, inclusive, and high-performing senior secondary education system that nurtures critical thinkers, innovators, and responsible citizens.
+                    </p>
+                </div>
+
+                <div class="bg-gray-50 p-8 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition fade-up" style="transition-delay: 200ms;">
+                    <div class="w-12 h-12 bg-[var(--light-green)] rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-[var(--dark-green)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Our Mission </h3>
+                    <p class="text-gray-600 leading-relaxed text-sm">
+                        To provide quality, well-supervised, and adequately resourced senior secondary education that equips students with the knowledge, skills, and values required for success in further education and society.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <iframe 
+  src="/orgonagram/index.html" 
+  style="width:100%; height:100vh; border:none;"
+></iframe>
+
+    <section id="management" class="bg-[var(--light-green)] py-16">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="text-center mb-12 fade-up">
+                <h2 class="text-3xl font-bold text-[var(--dark-green)]">Our Leadership</h2>
+                <p class="text-gray-600 mt-2">The dedicated team driving educational excellence in Kogi State.</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto mb-16 fade-up">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col md:flex-row">
+                    <div class="md:w-2/5  bg-gray-300 flex items-center justify-center text-center ">
+                        <div class="w-full h-[400px] bg-[url('/images/Habiba.jpg')] bg-cover bg-center  bg-no-repeat"></div>
+                    </div>
+                    <div class="p-8 md:w-3/5 flex flex-col justify-center">
+                        <span class="text-[var(--primary-green)] font-bold tracking-wider text-sm uppercase mb-2">Office of the Executive Chairman </span>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Dr. Habiba Suleiman </h3>
+                        <p class="text-gray-600 mb-4">
+                            Provides strategic leadership, policy direction, and oversight. Ensures effective implementation of educational reforms, represents the Board in stakeholder engagements, and approves operational decisions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden fade-up">
+                    <div class="w-full bg-gray-300 flex items-center justify-center ">
+                      <div class="w-full h-[400px] bg-[url('/images/Akpata.jpg')] bg-cover  bg-no-repeat"></div>
+                      
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-bold text-lg text-gray-900">Akpata Agnes </h4>
+                        <p class="text-[var(--primary-green)] text-sm font-medium mb-3">Director, Schools & Colleges</p>
+                        <p class="text-gray-600 text-sm">Coordinates and supervises all Senior Secondary Schools, ensuring compliance with government policies.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden fade-up" style="transition-delay: 100ms;">
+                    <div class="w-full bg-gray-300 flex items-center justify-center ">
+                        <div class="w-full h-[400px] bg-[url('/images/AbdulrahmanS.Otaru.jpg')] bg-cover bg-center bg-no-repeat"></div>
+
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-bold text-lg text-gray-900">Abdulrahman S. Otaru </h4>
+                        <p class="text-[var(--primary-green)] text-sm font-medium mb-3">Director, Human Resources</p>
+                        <p class="text-gray-600 text-sm">Manages recruitment, deployment, welfare, and professional development of all teaching and non-teaching staff.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden fade-up" style="transition-delay: 200ms;">
+                    <div class="w-full bg-gray-300 flex items-center justify-center ">
+                        <div class="w-full h-[400px] bg-[url('/images/Kolade.jpg')] bg-cover  bg-no-repeat"></div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-bold text-lg text-gray-900">Kolade Abidemi Ph.D </h4>
+                        <p class="text-[var(--primary-green)] text-sm font-medium mb-3">Director, Finance & Accounts</p>
+                        <p class="text-gray-600 text-sm">Ensures prudent financial management, budget preparation, and timely disbursement of funds.</p>
+                    </div>
+                </div>
+
+                 <div class="bg-white rounded-lg shadow-sm overflow-hidden fade-up">
+                    <div class="w-full bg-gray-300 flex items-center justify-center">
+                        <div class="w-full h-[400px] bg-[url('/images/Helen.jpg')] bg-cover bg-center bg-no-repeat"></div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-bold text-lg text-gray-900">Helen Adeyemi </h4>
+                        <p class="text-[var(--primary-green)] text-sm font-medium mb-3">Director, Planning & Research</p>
+                        <p class="text-gray-600 text-sm">Provides data-driven planning, policy formulation, research, and maintains the EMIS.</p>
+                    </div>
+                </div>
+
+                 <div class="bg-white rounded-lg shadow-sm overflow-hidden fade-up" style="transition-delay: 100ms;">
+                    <div class=" w-full bg-gray-300 flex items-center justify-center ">
+                        <div class="w-full h-[400px] bg-[url('/images/ElderMosesM.Shaibu.jpg')] bg-cover  bg-no-repeat"></div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-bold text-lg text-gray-900">Elder Moses M. Shuaibu</h4>
+                        <p class="text-[var(--primary-green)] text-sm font-medium mb-3">Director, ICT</p>
+                        <p class="text-gray-600 text-sm">Provides digital support systems, network security, and manages online platforms for statewide education.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden fade-up" style="transition-delay: 200ms;">
+                    <div class=" w-full bg-gray-300 flex items-center justify-center ">
+                        <div class="w-full h-[400px] bg-[url('/images/AAT.jpg')] bg-cover  bg-no-repeat"></div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-bold text-lg text-gray-900">A.T. Abubakar </h4>
+                        <p class="text-[var(--primary-green)] text-sm font-medium mb-3">Director, Quality Assurance</p>
+                        <p class="text-gray-600 text-sm">Upholds quality standards through school inspections, curriculum monitoring, and teacher performance evaluation[cite: 127].</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="departments" class="py-16 bg-white">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="text-center mb-12 fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-[var(--dark-green)]">Our Departments & Functions</h2>
+                <p class="text-gray-600 mt-4 max-w-2xl mx-auto">A detailed look at the functional units powering our education system.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm card-hover transition duration-300 fade-up">
+                    <h3 class="text-xl font-bold text-[var(--primary-green)] mb-3">Schools & Colleges </h3>
+                    <ul class="text-gray-600 text-sm space-y-2 list-disc list-inside">
+                        <li>Supervision of all Senior Secondary Schools.</li>
+                        <li>Approval/monitoring of new schools.</li>
+                        <li>Posting of principals and vice principals.</li>
+                        <li>Inspection of facilities and records.</li>
+                        <li>Liaison with Zonal Offices.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm card-hover transition duration-300 fade-up">
+                    <h3 class="text-xl font-bold text-[var(--primary-green)] mb-3">Human Resources </h3>
+                    <ul class="text-gray-600 text-sm space-y-2 list-disc list-inside">
+                        <li>Recruitment, appointment, and posting of staff.</li>
+                        <li>Maintain personnel records/service docs.</li>
+                        <li>Staff promotion and discipline.</li>
+                        <li>Training and professional development.</li>
+                        <li>Ensuring staff welfare and ethics.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm card-hover transition duration-300 fade-up">
+                    <h3 class="text-xl font-bold text-[var(--primary-green)] mb-3">ICT Department </h3>
+                    <ul class="text-gray-600 text-sm space-y-2 list-disc list-inside">
+                        <li>Maintenance of hardware and software.</li>
+                        <li>Support for e-learning/digital literacy.</li>
+                        <li>Database and EMIS management.</li>
+                        <li>Network security and systems backup.</li>
+                        <li>Management of website/email services.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm card-hover transition duration-300 fade-up">
+                    <h3 class="text-xl font-bold text-[var(--primary-green)] mb-3">Quality Assurance </h3>
+                    <ul class="text-gray-600 text-sm space-y-2 list-disc list-inside">
+                        <li>Conducting regular school inspections.</li>
+                        <li>Monitoring curriculum implementation.</li>
+                        <li>Assessment of learning outcomes.</li>
+                        <li>Monitoring teacher performance.</li>
+                        <li>Ensuring compliance with benchmarks.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm card-hover transition duration-300 fade-up">
+                    <h3 class="text-xl font-bold text-[var(--primary-green)] mb-3">Planning & Research </h3>
+                    <ul class="text-gray-600 text-sm space-y-2 list-disc list-inside">
+                        <li>Strategic and operational planning.</li>
+                        <li>Research and needs assessments.</li>
+                        <li>Maintaining EMIS.</li>
+                        <li>Analysis of performance metrics.</li>
+                        <li>Producing statistical reports.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm card-hover transition duration-300 fade-up">
+                    <h3 class="text-xl font-bold text-[var(--primary-green)] mb-3">Finance & Accounts </h3>
+                    <ul class="text-gray-600 text-sm space-y-2 list-disc list-inside">
+                        <li>Preparation of annual budget.</li>
+                        <li>Processing salaries and allowances.</li>
+                        <li>Bank reconciliations and records.</li>
+                        <li>Payment processing for projects.</li>
+                        <li>Financial reporting and audit.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="learn-more" class="bg-gray-50 py-16">
       <div class="container mx-auto px-4 lg:px-8">
-        <h2 class="text-3xl md:text-4xl font-bold text-[var(--dark-green)] text-center mb-8">The Power of a Centralized Database</h2>
-        <div class="max-w-4xl mx-auto text-gray-700 space-y-6">
-          <p class="text-lg">
-            A centralized database is the backbone of efficient and effective education management. By consolidating data from all secondary schools across Kogi State, the Kogi State Senior Secondary Education Board (KGSSEB) ensures seamless access to critical information, enabling data-driven decisions that transform the educational landscape.
-          </p>
-          <h3 class="text-2xl font-semibold text-[var(--primary-green)]">Key Benefits</h3>
-          <ul class="list-disc pl-6 space-y-2">
-            <li><strong>Advanced Resource Planning:</strong> A centralized system allows for precise allocation of resources such as teachers, classrooms, and learning materials, ensuring equitable distribution and optimal utilization across schools.</li>
-            <li><strong>Improved Decision-Making:</strong> Real-time access to student and school performance data empowers administrators to identify trends, address challenges, and implement targeted interventions.</li>
-            <li><strong>Enhanced Transparency:</strong> Centralized data promotes accountability by providing stakeholders with clear insights into school operations, funding, and academic outcomes.</li>
-            <li><strong>Streamlined Administration:</strong> Automating administrative tasks reduces paperwork, minimizes errors, and frees up time for educators to focus on teaching and student development.</li>
-            <li><strong>Scalable Growth:</strong> A unified database supports future expansion, enabling the integration of new schools, programs, and technologies with ease.</li>
-          </ul>
-          <p class="text-lg">
-            By leveraging a centralized database, KGSSEB is paving the way for a modern, efficient, and inclusive education system that empowers students, educators, and administrators alike.
-          </p>
+        <div class="bg-[var(--dark-green)] rounded-2xl p-8 md:p-12 text-white shadow-xl relative overflow-hidden fade-up">
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-white opacity-10"></div>
+            
+            <div class="relative z-10 text-center max-w-3xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">Centralized Data & EMIS</h2>
+                <p class="text-lg text-gray-200 mb-8">
+                    Our ICT Department maintains a centralized database that streamlines administration, enhances transparency, and empowers data-driven decision-making for all stakeholders.
+                </p>
+                <a href="/images/logo.jpg" target="_blank" class="inline-block bg-white text-[var(--dark-green)] font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition shadow-lg">
+                    Access The Portal
+                </a>
+            </div>
         </div>
       </div>
     </section>
 
-    <!-- Acknowledgment Section -->
-    <section id="acknowledgment" class="bg-[var(--light-green)] py-12">
-      <div class="container mx-auto px-4 lg:px-8 text-center">
-        <h2 class="text-3xl md:text-4xl font-bold text-[var(--dark-green)] mb-6">Our Gratitude</h2>
-        <p class="max-w-3xl mx-auto text-lg text-gray-700">
-          We extend our heartfelt gratitude to the Kogi State Senior Secondary Education Board for their visionary leadership and unwavering commitment to advancing education through this transformative project. Their initiative to develop a centralized database and digital platform marks a significant step toward a brighter future for secondary education in Kogi State. Thank you for driving innovation and excellence in our schools.
-        </p>
-      </div>
-    </section>
   </main>
 
-  <!-- Footer -->
   <footer class="bg-[var(--dark-green)] text-white py-12">
     <div class="container mx-auto px-4 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
-          <h3 class="text-lg font-semibold mb-4">Kogi State Senior Secondary Education Board</h3>
-          <p class="text-sm text-gray-300">
-            Committed to transforming secondary education through innovation, data-driven decisions, and inclusive growth.
+          <h3 class="text-lg font-semibold mb-4 text-[var(--light-green)]">KGSSEB</h3>
+          <p class="text-sm text-gray-300 mb-4">
+             To provide quality, well-supervised, and adequately resourced senior secondary education that equips students with the knowledge, skills, and values required for success.
           </p>
+          <p class="text-sm text-gray-300"><strong>Working Hours:</strong><br>Monday – Friday, 8:00 AM – 4:00 PM </p>
         </div>
         <div>
-          <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+          <h3 class="text-lg font-semibold mb-4 text-[var(--light-green)]">Quick Links</h3>
           <ul class="space-y-2 text-sm">
-            <li><a href="https://app.kgsseb.kogistate.gov.ng/signin" target="_blank" class="hover:text-[var(--light-green)] transition-colors">Centralized Database Login</a></li>
-            <li><a href="#about" class="hover:text-[var(--light-green)] transition-colors">About Us</a></li>
-            <li><a href="#learn-more" class="hover:text-[var(--light-green)] transition-colors">Learn More</a></li>
+            <li><a href="https://app.kgsseb.kogistate.gov.ng/signin" target="_blank" class="hover:text-white text-gray-300 transition-colors">Portal Login</a></li>
+            <li><a href="#about" class="hover:text-white text-gray-300 transition-colors">Our Mandate</a></li>
+            <li><a href="#departments" class="hover:text-white text-gray-300 transition-colors">Departments</a></li>
           </ul>
         </div>
         <div>
-          <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
-          <p class="text-sm text-gray-300">
-            Phase two kogi state secretariat complex,<br>
-            P.M.B 1065, lokoja, kogi state, Nigeria.<br>
-            Email: <a href="mailto:info@kgsseb.kogistate.gov.ng" class="hover:text-[var(--light-green)] transition-colors">info@kgsseb.kogistate.gov.ng</a><br>
-
-            Email: <a href="mailto:admin@kgsseb.kogistate.gov.ng" class="hover:text-[var(--light-green)] transition-colors">admin@kgsseb.kogistate.gov.ng</a><br>
-            Phone No: <a href="tel:+2349055567117">Call 09055567117</a> <br>
-            Phone No: <a href="tel:+2349055581083">Call 09055581083</a>
-
+          <h3 class="text-lg font-semibold mb-4 text-[var(--light-green)]">Contact Us</h3>
+          <p class="text-sm text-gray-300 space-y-2">
+            <span class="block">KGSSEB Headquarters, Lokoja, Kogi State, Nigeria.</span>
+            <span class="block">Phase two kogi state secretariat complex, P.M.B 1065.</span>
+            
+            <span class="block mt-4">
+                Email: <a href="mailto:info@kgsseb.kogistate.gov.ng" class="hover:text-white text-gray-300 transition-colors">info@kgsseb.kogistate.gov.ng</a><br>
+                Email: <a href="mailto:admin@kgsseb.kogistate.gov.ng" class="hover:text-white text-gray-300 transition-colors">admin@kgsseb.kogistate.gov.ng</a> 
+            </span>
+            <span class="block mt-2">
+                Phone: <a href="tel:+2349055567117" class="hover:text-white">09055567117</a>, <a href="tel:+2349055581083" class="hover:text-white">09055581083</a>
+            </span>
+            <span class="text-xs text-gray-400 block mt-2"></span>
           </p>
         </div>
       </div>
@@ -190,6 +480,26 @@
   </footer>
 
   <script>
+    // Reveal Animations on Scroll
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-up').forEach(el => {
+      observer.observe(el);
+    });
+
     // Hero Carousel
     document.addEventListener("DOMContentLoaded", function () {
       const slides = document.querySelectorAll("#hero-carousel .carousel-slide");
@@ -200,7 +510,7 @@
       // Create indicators dynamically
       slides.forEach((_, i) => {
         const btn = document.createElement("button");
-        btn.className = "w-3 h-3 bg-white rounded-full opacity-50";
+        btn.className = "w-3 h-3 bg-white rounded-full opacity-50 hover:opacity-100 transition";
         btn.addEventListener("click", () => showSlide(i));
         indicatorContainer.appendChild(btn);
       });

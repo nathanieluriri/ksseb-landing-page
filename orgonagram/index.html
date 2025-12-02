@@ -1,235 +1,271 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-<title>Organogram</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Organogram - Mobile Optimized</title>
+  <style>
+    :root{
+      --bg: #ffffff;
+      --frame: #e6e6e6;
+      --ink: #111827;
+      --accent: #00a182;
+      --gap: 18px;
+      --card-radius: 8px;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
+    body{background:#fafafa;color:var(--ink);padding:24px;box-sizing:border-box;}
 
-<style>
-  :root{
-    --bg: #ffffff;
-    --frame: #e6e6e6;
-    --ink: #111827;
-    --accent: #00a182;
-    --gap: 18px;
-    --card-radius: 8px;
-  }
-  html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
-  body{background:#fafafa;color:var(--ink);padding:24px;box-sizing:border-box;}
+    /* Outer framed box */
+    .frame {
+      background:var(--bg);
+      border:1px solid var(--frame);
+      border-radius:14px;
+      padding:18px;
+      box-shadow:0 6px 18px rgba(12,12,12,0.06);
+      max-width:100%;
+      height: 90vh;
+      display:flex;
+      flex-direction:column;
+      overflow: hidden;
+    }
 
-  /* Outer framed box */
-  .frame {
-    background:var(--bg);
-    border:1px solid var(--frame);
-    border-radius:14px;
-    padding:18px;
-    box-shadow:0 6px 18px rgba(12,12,12,0.06);
-    max-width:100%;
-    height: 90vh;
-    display:flex;
-    flex-direction:column;
-    overflow: hidden;
-  }
+    header.title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:12px; flex-shrink: 0;}
+    header h1{font-size:16px;margin:0;font-weight:700;letter-spacing:0.06em;text-transform:uppercase}
+    header .controls{display:flex;gap:8px;align-items:center}
 
-  header.title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:12px; flex-shrink: 0;}
-  header h1{font-size:16px;margin:0;font-weight:700;letter-spacing:0.06em;text-transform:uppercase}
-  header .controls{display:flex;gap:8px;align-items:center}
-
-  /* Toolbar buttons */
-  .btn {
-    display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid #d1d5db;background:#fff;cursor:pointer;font-size:13px;
-    user-select: none;
-  }
-  .btn:active{transform:translateY(1px)}
-  .btn:hover{background:#f9fafb}
-
-  /* Chart viewport */
-  .viewport {
-    flex-grow: 1;
-    width:100%;
-    border-radius:10px;
-    overflow:hidden;
-    border:1px dashed #e6e6e6;
-    position:relative;
-    background:linear-gradient(180deg, #ffffff 0%, #fbfffb 100%);
+    /* Toolbar buttons */
+    .btn {
+      display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid #d1d5db;background:#fff;cursor:pointer;font-size:13px;
+      user-select: none;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn:hover{background:#f9fafb}
     
-    /* VITAL CHANGE: Allow browser to handle vertical page scrolling (pan-y) */
-    touch-action: pan-y; 
-    cursor: grab;
-  }
-  .viewport:active { cursor: grabbing; }
+    /* Chart viewport */
+    .viewport {
+      flex-grow: 1;
+      width:100%;
+      border-radius:10px;
+      overflow:hidden;
+      border:1px dashed #e6e6e6;
+      position:relative;
+      background:linear-gradient(180deg, #ffffff 0%, #fbfffb 100%);
+      
+      /* VITAL CHANGE: Allow browser to handle vertical page scrolling (pan-y) */
+      touch-action: pan-y; 
+      cursor: grab;
+    }
+    .viewport:active { cursor: grabbing; }
 
-  /* coordinate system */
-  .canvas {
-    transform-origin: 0 0;
-    will-change: transform;
-    position:absolute;
-    left:0; top:0;
-    width: fit-content;
-    height: fit-content;
-    padding:40px;
-  }
+    /* coordinate system */
+    .canvas {
+      transform-origin: 0 0;
+      will-change: transform;
+      position:absolute;
+      left:0; top:0;
+      width: fit-content;
+      height: fit-content;
+      padding:40px;
+    }
 
-  /* Nodes & Styling */
-  .exec { display:flex; justify-content:center; margin-bottom:14px; position: relative; z-index: 2; }
-  .node { border:2px solid #2d3748; background:#fff; padding:8px 14px; border-radius:6px; font-weight:600; font-size:13px; display:inline-block; white-space:nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    /* Nodes & Styling */
+    .exec { display:flex; justify-content:center; margin-bottom:14px; position: relative; z-index: 2; }
+    .node { border:2px solid #2d3748; background:#fff; padding:8px 14px; border-radius:6px; font-weight:600; font-size:13px; display:inline-block; white-space:nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-  .departments { display:grid; grid-template-columns: repeat(8, auto); gap:24px; align-items:start; margin-top:20px; position: relative; z-index: 2; }
-  .col { display:flex; flex-direction:column; align-items:center; min-width:180px; }
-  
-  .dept { padding:8px 10px; border-radius:6px; font-weight:700; font-size:12px; border:2px solid rgba(0,0,0,0.12); background:linear-gradient(180deg, rgba(255,255,255,1), rgba(250,250,250,1)); text-align:center; width: 100%; box-sizing: border-box; position: relative; z-index: 2; }
-  
-  .units { margin-top:10px; display:flex; flex-direction:column; gap:8px; width:100%; align-items:stretch; position: relative; z-index: 2; }
-  .unit { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.08); background:#fff; font-size:11px; text-align:center; }
+    .departments { display:grid; grid-template-columns: repeat(8, auto); gap:24px; align-items:start; margin-top:20px; position: relative; z-index: 2; }
+    .col { display:flex; flex-direction:column; align-items:center; min-width:180px; }
+    
+    .dept { padding:8px 10px; border-radius:6px; font-weight:700; font-size:12px; border:2px solid rgba(0,0,0,0.12); background:linear-gradient(180deg, rgba(255,255,255,1), rgba(250,250,250,1)); text-align:center; width: 100%; box-sizing: border-box; position: relative; z-index: 2; }
+    
+    .units { margin-top:10px; display:flex; flex-direction:column; gap:8px; width:100%; align-items:stretch; position: relative; z-index: 2; }
+    .unit { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.08); background:#fff; font-size:11px; text-align:center; }
 
-  /* Color Themes */
-  .c-hr { border-color:#7dd3fc; background:linear-gradient(180deg,#ecfeff,#f8feff); color:#0369a1 }
-  .c-fin { border-color:#fbcfe8; background:linear-gradient(180deg,#fff0f6,#fff6fb); color:#9f1239 }
-  .c-plan { border-color:#fde68a; background:linear-gradient(180deg,#fffbe6,#fffbf0); color:#92400e }
-  .c-qa { border-color:#bbf7d0; background:linear-gradient(180deg,#f7fff3,#fbfff7); color:#166534 }
-  .c-sch { border-color:#c7d2fe; background:linear-gradient(180deg,#f8f9ff,#fbfbff); color:#3730a3 }
-  .c-ict { border-color:#fecaca; background:linear-gradient(180deg,#fff5f5,#fffbfb); color:#7f1d1d }
-  .c-support { border-color:#e6e6e6; background:linear-gradient(180deg,#ffffff,#fafafa); color:#374151 }
+    /* Color Themes */
+    .c-hr { border-color:#7dd3fc; background:linear-gradient(180deg,#ecfeff,#f8feff); color:#0369a1 }
+    .c-fin { border-color:#fbcfe8; background:linear-gradient(180deg,#fff0f6,#fff6fb); color:#9f1239 }
+    .c-plan { border-color:#fde68a; background:linear-gradient(180deg,#fffbe6,#fffbf0); color:#92400e }
+    .c-qa { border-color:#bbf7d0; background:linear-gradient(180deg,#f7fff3,#fbfff7); color:#166534 }
+    .c-sch { border-color:#c7d2fe; background:linear-gradient(180deg,#f8f9ff,#fbfbff); color:#3730a3 }
+    .c-ict { border-color:#fecaca; background:linear-gradient(180deg,#fff5f5,#fffbfb); color:#7f1d1d }
+    .c-support { border-color:#e6e6e6; background:linear-gradient(180deg,#ffffff,#fafafa); color:#374151 }
 
-  .right-stack { display:flex; flex-direction:column; gap:8px; align-items:center; }
+    .right-stack { display:flex; flex-direction:column; gap:8px; align-items:center; }
 
-  /* Canvas Box */
-  .canvas-box { border:1px solid #e6e6e6; border-radius:8px; padding:30px; background:linear-gradient(180deg,#ffffff,#fcfff9); position:relative; display: inline-block; }
-  
-  /* SVG */
-  svg.connectors { position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none; overflow:visible; z-index: 1; }
-  .connector-line { stroke-width: 2px; stroke: #94a3b8; fill: none; }
+    /* Canvas Box */
+    .canvas-box { border:1px solid #e6e6e6; border-radius:8px; padding:30px; background:linear-gradient(180deg,#ffffff,#fcfff9); position:relative; display: inline-block; }
+    
+    /* SVG */
+    svg.connectors { position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none; overflow:visible; z-index: 1; }
+    .connector-line { stroke-width: 2px; stroke: #94a3b8; fill: none; }
 
-  /* Print */
-  @media print {
-    body{padding:0;background:#fff}
-    .frame { box-shadow:none;border:none;border-radius:0;padding:0; height: auto; display: block; }
-    header { display:none }
-    .viewport { overflow:visible; height:auto; border: none; }
-    .canvas { transform: scale(0.65) translate(0,0); transform-origin:top left; padding: 0; position: static; }
-    .btn { display:none }
-  }
+    /* Print */
+    @media print {
+      body{padding:0;background:#fff}
+      .frame { box-shadow:none;border:none;border-radius:0;padding:0; height: auto; display: block; }
+      header { display:none }
+      .viewport { overflow:visible; height:auto; border: none; }
+      .canvas { transform: scale(0.65) translate(0,0); transform-origin:top left; padding: 0; position: static; }
+      .btn { display:none }
+    }
 
-  .hint { color:#6b7280;font-size:12px; font-weight: 500; background:#f3f4f6; padding:4px 8px; border-radius:4px;}
-</style>
+    .hint { color:#6b7280;font-size:12px; font-weight: 500; background:#f3f4f6; padding:4px 8px; border-radius:4px;}
+
+    /* --------------------------------------------- */
+    /* 🔥 MOBILE FIX: Media Query for Header/Buttons */
+    /* --------------------------------------------- */
+    @media (max-width: 768px) {
+      body { padding: 12px; } /* Less padding on small screens */
+      .frame { padding: 12px; height: 92vh; }
+      
+      header.title-row {
+        flex-wrap: wrap; /* Allow the title and controls to wrap to the next line */
+        justify-content: center; /* Center all items when wrapped */
+        gap: 16px; /* Add vertical space between wrapped items */
+      }
+      
+      header h1 { 
+        width: 100%; /* Make title take full width */
+        text-align: center;
+      }
+      
+      .btn {
+        padding: 6px 8px; /* Slightly smaller padding */
+        font-size: 12px; /* Smaller font size */
+        gap: 4px;
+      }
+      
+      header .controls {
+        width: 100%; /* Make controls take full width */
+        justify-content: space-between; /* Space out the buttons */
+        flex-grow: 1;
+      }
+      
+      /* Hide complex PC shortcuts on mobile to save space */
+      .hint {
+        display: none; 
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="frame">
+    <header class="title-row">
+      <div style="display:flex;gap:12px;align-items:center">
+        <h1>Organogram — Kogi State Senior Secondary Education Board</h1>
+      </div>
 
-<div class="frame">
-  <header class="title-row">
-    <div style="display:flex;gap:12px;align-items:center">
-      <h1>Organogram — Kogi State Senior Secondary Education Board</h1>
-    </div>
+      <div class="controls">
+        <button class="btn" id="zoomIn">Zoom +</button>
+        <button class="btn" id="zoomOut">Zoom −</button>
+        <button class="btn" id="reset">Reset</button>
+        <button class="btn" id="printBtn">Print</button>
+      </div>
+    </header>
 
-    <div class="controls">
-      <button class="btn" id="zoomIn">Zoom +</button>
-      <button class="btn" id="zoomOut">Zoom −</button>
-      <button class="btn" id="reset">Reset</button>
-      <button class="btn" id="printBtn">Print</button>
-    </div>
-  </header>
+    <div class="viewport" id="viewport">
+      <div class="canvas" id="canvas">
+        <div class="canvas-box" id="canvasBox">
+          <svg class="connectors" id="svg" xmlns="http://www.w3.org/2000/svg"></svg>
 
-  <div class="viewport" id="viewport">
-    <div class="canvas" id="canvas">
-      <div class="canvas-box" id="canvasBox">
-        <svg class="connectors" id="svg" xmlns="http://www.w3.org/2000/svg"></svg>
-
-        <div class="exec">
-          <div class="node" id="execNode" style="width:320px;text-align:center">EXECUTIVE CHAIRMAN</div>
-        </div>
-
-        <div style="height:40px"></div>
-
-        <div style="display:flex;justify-content:center;position:relative;z-index:2">
-          <div class="node" id="eduBoard" style="width:320px;text-align:center">EDUCATION BOARD</div>
-        </div>
-
-        <div style="height:40px"></div>
-
-        <div class="departments" id="departments">
-          <div class="col" id="col-hr">
-            <div class="dept c-hr" id="dept-hr">DEPT. OF HUMAN RESOURCES</div>
-            <div class="units">
-              <div class="unit">ESTABLISHMENTS</div>
-              <div class="unit">STAFF DEV & TRAINING</div>
-              <div class="unit">REGISTRY</div>
-            </div>
-          </div>
-          <div class="col" id="col-fin">
-            <div class="dept c-fin" id="dept-fin">DEPT. OF FINANCE & ACCOUNTS</div>
-            <div class="units">
-              <div class="unit">MAIN ACCOUNT</div>
-              <div class="unit">SALARIES & WAGES</div>
-              <div class="unit">HOUSING FUND</div>
-              <div class="unit">STORES</div>
-            </div>
-          </div>
-          <div class="col" id="col-plan">
-            <div class="dept c-plan" id="dept-plan">DEPT. PLANNING, RESEARCH & STATS</div>
-            <div class="units">
-              <div class="unit">RESEARCH & PUB</div>
-              <div class="unit">BUDGET & STATS</div>
-              <div class="unit">PROJECT IMPL.</div>
-              <div class="unit">EMIS</div>
-            </div>
-          </div>
-          <div class="col" id="col-qa">
-            <div class="dept c-qa" id="dept-qa">DEPT. OF QUALITY ASSURANCE</div>
-            <div class="units">
-              <div class="unit">ZONAL OFFICES</div>
-              <div class="unit">ADVOCACY</div>
-              <div class="unit">MONITORING</div>
-            </div>
-          </div>
-          <div class="col" id="col-sch" style="min-width:260px">
-            <div class="dept c-sch" id="dept-sch">DEPT. OF SCHOOLS & COLLEGES</div>
-            <div class="units">
-              <div class="unit" style="font-weight:700;background:#f3f4ff;border-color:#c7d2fe">SCHOOL SERVICES</div>
-              <div class="unit">QUIZ AND COMPETITIONS</div>
-              <div class="unit">SPECIAL EDUCATION</div>
-
-              <div style="height:6px"></div>
-              <div class="unit" style="font-weight:700;background:#f3f4ff;border-color:#c7d2fe">SCIENCE & TECH</div>
-              <div class="unit">LABORATORY DEV</div>
-              <div class="unit">INNOVATION</div>
-
-              <div style="height:6px"></div>
-              <div class="unit" style="font-weight:700;background:#f3f4ff;border-color:#c7d2fe">VOCATIONAL</div>
-              <div class="unit">INSTALLATION & SAFETY</div>
-              
-              <div style="height:6px"></div>
-              <div class="unit" style="font-weight:700;background:#f3f4ff;border-color:#c7d2fe">CO-CURRICULAR</div>
-              <div class="unit">SPORTS & HEALTH</div>
-            </div>
-          </div>
-          <div class="col" id="col-ict">
-            <div class="dept c-ict" id="dept-ict">DEPARTMENT OF ICT</div>
-            <div class="units">
-              <div class="unit">RESOURCE & LIBRARY</div>
-              <div class="unit">E-LEARNING</div>
-            </div>
-          </div>
-           <div style="width:10px"></div>
-          <div class="col" id="col-support">
-            <div class="dept c-support" id="dept-support">SUPPORT UNITS</div>
-            <div class="units right-stack">
-              <div class="unit">INTERNAL AUDIT</div>
-              <div class="unit">SERVICOM</div>
-              <div class="unit">PUBLIC RELATIONS</div>
-              <div class="unit">LEGAL SERVICE</div>
-              <div class="unit">PROCUREMENT</div>
-            </div>
+          <div class="exec">
+            <div class="node" id="execNode" style="width:320px;text-align:center">EXECUTIVE CHAIRMAN</div>
           </div>
 
-        </div> </div> </div> </div> 
+          <div style="height:40px"></div>
+
+          <div style="display:flex;justify-content:center;position:relative;z-index:2">
+            <div class="node" id="eduBoard" style="width:320px;text-align:center">EDUCATION BOARD</div>
+          </div>
+
+          <div style="height:40px"></div>
+
+          <div class="departments" id="departments">
+            <div class="col" id="col-hr">
+              <div class="dept c-hr" id="dept-hr">DEPT. OF HUMAN RESOURCES</div>
+              <div class="units">
+                <div class="unit">ESTABLISHMENTS</div>
+                <div class="unit">STAFF DEV & TRAINING</div>
+                <div class="unit">REGISTRY</div>
+              </div>
+             </div>
+            <div class="col" id="col-fin">
+              <div class="dept c-fin" id="dept-fin">DEPT. OF FINANCE & ACCOUNTS</div>
+              <div class="units">
+                <div class="unit">MAIN ACCOUNT</div>
+                <div class="unit">SALARIES & WAGES</div>
+                <div class="unit">HOUSING FUND</div>
+                <div class="unit">STORES</div>
+              </div>
+            </div>
+            <div class="col" id="col-plan">
+              <div class="dept c-plan" id="dept-plan">DEPT. PLANNING, RESEARCH & STATS</div>
+              <div class="units">
+                <div class="unit">RESEARCH & PUB</div>
+                <div class="unit">BUDGET & STATS</div>
+                <div class="unit">PROJECT IMPL.</div>
+                <div class="unit">EMIS</div>
+              </div>
+            </div>
+            <div class="col" id="col-qa">
+              <div class="dept c-qa" id="dept-qa">DEPT. OF QUALITY ASSURANCE</div>
+              <div class="units">
+                <div class="unit">ZONAL OFFICES</div>
+                <div class="unit">ADVOCACY</div>
+                <div class="unit">MONITORING</div>
+              </div>
+            </div>
+            <div class="col" id="col-sch" style="min-width:260px">
+              <div class="dept c-sch" id="dept-sch">DEPT. OF SCHOOLS & COLLEGES</div>
+              <div class="units">
+                <div class="unit" style="font-weight:700;background:#f3f4ff;border-color:#c7d2fe">SCHOOL SERVICES</div>
+                <div class="unit">QUIZ AND COMPETITIONS</div>
+                <div class="unit">SPECIAL EDUCATION</div>
+
+                <div style="height:6px"></div>
+                <div class="unit" style="font-weight:700;background:#f3f4ff;border-color:#c7d2fe">SCIENCE & TECH</div>
+                <div class="unit">LABORATORY DEV</div>
+                <div class="unit">INNOVATION</div>
+
+                <div style="height:6px"></div>
+                <div class="unit" style="font-weight:700;background:#f3f4ff;border-color:#c7d2fe">VOCATIONAL</div>
+                <div class="unit">INSTALLATION & SAFETY</div>
+                
+                <div style="height:6px"></div>
+                <div class="unit" style="font-weight:700;background:#f3f4ff;border-color:#c7d2fe">CO-CURRICULAR</div>
+                <div class="unit">SPORTS & HEALTH</div>
+              </div>
+            </div>
+            <div class="col" id="col-ict">
+              <div class="dept c-ict" id="dept-ict">DEPARTMENT OF ICT</div>
+              <div class="units">
+                <div class="unit">RESOURCE & LIBRARY</div>
+                <div class="unit">E-LEARNING</div>
+              </div>
+            </div>
+              <div style="width:10px"></div>
+            <div class="col" id="col-support">
+              <div class="dept c-support" id="dept-support">SUPPORT UNITS</div>
+              <div class="units right-stack">
+                <div class="unit">INTERNAL AUDIT</div>
+                <div class="unit">SERVICOM</div>
+                <div class="unit">PUBLIC RELATIONS</div>
+                <div class="unit">LEGAL SERVICE</div>
+                <div class="unit">PROCUREMENT</div>
+              </div>
+            </div>
+
+          </div> 
+        </div> 
+      </div> 
+    </div> 
         
-        <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
-    <div class="hint">
-      <strong>Controls:</strong> Shift + Scroll to Pan &nbsp;•&nbsp; Ctrl + Scroll to Zoom &nbsp;•&nbsp; Click & Drag to Pan
+    <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center">
+      <div class="hint">
+        <strong>Controls:</strong> Shift + Scroll to Pan &nbsp;•&nbsp; Ctrl + Scroll to Zoom &nbsp;•&nbsp; Click & Drag to Pan
+      </div>
     </div>
   </div>
-
-</div>
 
 <script>
 /* -----------------------
@@ -251,8 +287,12 @@
 
   const centerView = () => {
     const vW = viewport.clientWidth;
-    const cW = canvas.clientWidth;
+    const cW = canvas.scrollWidth; // Use scrollWidth for the actual size including content
     scale = 0.8;
+    // If chart is narrower than viewport, use 1.0 scale
+    if (cW * scale < vW) {
+      scale = 1.0;
+    }
     tx = (vW - cW * scale) / 2;
     ty = 40;
     applyTransform();
@@ -260,9 +300,6 @@
 
   // --- 1. POINTER DRAG (Left Click / Touch) ---
   viewport.addEventListener('pointerdown', (e) => {
-    // We only capture if it's a mouse click or explicitly handled
-    // For touch, we want to allow scrolling unless they are grabbing specific elements
-    // But for a chart, usually dragging is expected.
     isPointerDown = true;
     viewport.setPointerCapture(e.pointerId);
     lastX = e.clientX;
@@ -325,20 +362,25 @@
       
     } else {
       // --- IGNORE (Page Scroll) ---
-      // We explicitly do NOT call preventDefault() here.
-      // This allows the event to bubble up and scroll the parent window.
     }
-  }, { passive: false }); // Passive false required to control preventDefault
+  }, { passive: false });
 
   // --- CONTROLS ---
-  document.getElementById('zoomIn').onclick = () => { scale *= 1.2; applyTransform(); };
-  document.getElementById('zoomOut').onclick = () => { scale /= 1.2; applyTransform(); };
+  document.getElementById('zoomIn').onclick = () => { 
+    scale *= 1.2; 
+    if(scale > 4) scale = 4;
+    applyTransform(); 
+  };
+  document.getElementById('zoomOut').onclick = () => { 
+    scale /= 1.2; 
+    if(scale < 0.1) scale = 0.1;
+    applyTransform(); 
+  };
   document.getElementById('reset').onclick = () => centerView();
-  document.getElementById('printBtn').onclick = () => window.open("/images/image_6.png", "_blank");
+  document.getElementById('printBtn').onclick = () => window.print();
 
   setTimeout(centerView, 100);
 })();
-
 
 /* -----------------------
    Logic 2: SVG Connectors
@@ -381,8 +423,12 @@
     
     drawPath(`M ${pExec.x} ${pExec.bottom} L ${pEdu.x} ${pEdu.top}`);
 
-    const firstDept = document.getElementById(depts[0]);
-    const pFirstDept = getRelativeCenter(firstDept);
+    if (depts.length === 0) return;
+
+    const deptElements = depts.map(id => document.getElementById(id)).filter(el => el);
+    if (deptElements.length === 0) return;
+    
+    const pFirstDept = getRelativeCenter(deptElements[0]);
     
     const spineY = (pEdu.bottom + pFirstDept.top) / 2;
     drawPath(`M ${pEdu.x} ${pEdu.bottom} L ${pEdu.x} ${spineY}`);
@@ -390,9 +436,7 @@
     let minX = Infinity;
     let maxX = -Infinity;
 
-    depts.forEach(id => {
-      const el = document.getElementById(id);
-      if(!el) return;
+    deptElements.forEach(el => {
       const p = getRelativeCenter(el);
       if(p.x < minX) minX = p.x;
       if(p.x > maxX) maxX = p.x;
@@ -407,6 +451,5 @@
   window.addEventListener('load', draw);
 })();
 </script>
-
 </body>
 </html>

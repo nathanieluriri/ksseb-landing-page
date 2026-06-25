@@ -145,6 +145,7 @@
             <a href="#about" class="hidden md:block text-sm font-medium text-gray-600 hover:text-[var(--primary-green)] transition">About</a>
             <a href="#management" class="hidden md:block text-sm font-medium text-gray-600 hover:text-[var(--primary-green)] transition">Management</a>
             <a href="#departments" class="hidden md:block text-sm font-medium text-gray-600 hover:text-[var(--primary-green)] transition">Departments</a>
+            <a href="#careers" class="careers-entry hidden md:block text-sm font-medium text-gray-600 hover:text-[var(--primary-green)] transition" style="display:none">Careers</a>
             <a href="https://app.kgsseb.kogistate.gov.ng/signin" target="_blank" class="btn-primary text-white font-semibold px-5 py-2.5 rounded-lg text-sm">
             Portal Login
             </a>
@@ -416,6 +417,27 @@
         </div>
     </section>
 
+    <section id="careers" class="careers-entry bg-[var(--light-green)] py-16" style="display:none">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="text-center mb-12 fade-up">
+                <span class="text-[var(--primary-green)] font-semibold tracking-wide uppercase text-sm">Join Our Team</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-[var(--dark-green)] mt-2">Careers at KGSSEB</h2>
+                <div class="w-24 h-1 bg-[var(--primary-green)] mx-auto mt-4 rounded"></div>
+                <p class="text-gray-600 mt-4 max-w-2xl mx-auto">
+                    Explore current openings and build a rewarding career with a team dedicated to advancing senior secondary education across Kogi State.
+                </p>
+            </div>
+
+            <div class="max-w-4xl mx-auto fade-up">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                    <!-- ATS Job Listings Widget -->
+                    <div id="ats-widget-6a3d9e22eec200ed6bc9f559"></div>
+                    <script src="https://application-tracking-system-fronten.vercel.app/embed/widget.js" data-widget="6a3d9e22eec200ed6bc9f559" async></script>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="learn-more" class="bg-gray-50 py-16">
       <div class="container mx-auto px-4 lg:px-8">
         <div class="bg-[var(--dark-green)] rounded-2xl p-8 md:p-12 text-white shadow-xl relative overflow-hidden fade-up">
@@ -426,7 +448,7 @@
                 <p class="text-lg text-gray-200 mb-8">
                     Our ICT Department maintains a centralized database that streamlines administration, enhances transparency, and empowers data-driven decision-making for all stakeholders.
                 </p>
-                <a href="/images/logo.jpg" target="_blank" class="inline-block bg-white text-[var(--dark-green)] font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition shadow-lg">
+                <a href="https://app.kgsseb.kogistate.gov.ng/signin" target="_blank" class="inline-block bg-white text-[var(--dark-green)] font-bold py-3 px-8 rounded-lg hover:bg-gray-100 transition shadow-lg">
                     Access The Portal
                 </a>
             </div>
@@ -452,6 +474,7 @@
             <li><a href="https://app.kgsseb.kogistate.gov.ng/signin" target="_blank" class="hover:text-white text-gray-300 transition-colors">Portal Login</a></li>
             <li><a href="#about" class="hover:text-white text-gray-300 transition-colors">Our Mandate</a></li>
             <li><a href="#departments" class="hover:text-white text-gray-300 transition-colors">Departments</a></li>
+            <li class="careers-entry" style="display:none"><a href="#careers" class="hover:text-white text-gray-300 transition-colors">Careers</a></li>
           </ul>
         </div>
         <div>
@@ -535,6 +558,29 @@
       setInterval(nextSlide, slideInterval);
       showSlide(0);
     });
+
+    // Show the Careers section only when the ATS has open roles.
+    // Uses the same public API the embedded widget reads, so the section
+    // (and its nav/footer links) stay hidden when there are no openings.
+    (function () {
+      const WIDGET_ID = "6a3d9e22eec200ed6bc9f559";
+      const API = "https://application-tracking-system-fronten.vercel.app/api/public/widgets/" + WIDGET_ID;
+
+      fetch(API, { credentials: "omit" })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (payload) {
+          const roles = (payload && payload.data && payload.data.roles) || [];
+          const hasOpenRoles = roles.some(function (role) {
+            return !role.status || String(role.status).toLowerCase() === "open";
+          });
+          if (hasOpenRoles) {
+            document.querySelectorAll(".careers-entry").forEach(function (el) {
+              el.style.display = "";
+            });
+          }
+        })
+        .catch(function () { /* leave Careers hidden if the check fails */ });
+    })();
   </script>
 </body>
 </html>

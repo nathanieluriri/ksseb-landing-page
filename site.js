@@ -26,24 +26,26 @@ async function loadWidget() {
   return env.data || { widget: {}, roles: [] };
 }
 
-function navHtml(onHero) {
+function defaultHero() {
+  return "/images/careers-hero.jpg";
+}
+
+function navHtml() {
   return (
     '<nav class="nav">' +
-    '<a href="/"><img src="/images/logo.jpg" alt="KGSSEB"></a>' +
+    '<a class="nav-brand" href="/jobs/"><img src="/images/logo.jpg" alt="KGSSEB"></a>' +
     '<div class="nav-links">' +
-    '<a href="/">Home</a><a href="/jobs/">Jobs</a><a class="btn" href="/portal/">Portal</a>' +
+    '<a href="/jobs/">Home</a><a href="/jobs/">Jobs</a><a class="btn" href="/portal/">Portal</a>' +
     "</div></nav>"
   );
 }
 
 function heroHtml(opts) {
   const content = opts.content || {};
-  const photo = content.hero_image_url
-    ? '<div class="hero-photo" style="background-image:url(\'' + content.hero_image_url + "')\"></div>"
-    : "";
+  const src = content.hero_image_url || defaultHero();
   return (
     '<section class="hero' + (opts.compact ? " compact" : "") + '">' +
-    photo +
+    '<div class="hero-photo" style="background-image:url(\'' + src + "')\"></div>" +
     '<div class="hero-wash"></div>' +
     navHtml() +
     '<div class="hero-inner">' +
@@ -51,7 +53,9 @@ function heroHtml(opts) {
     "<h1>" + escapeHtml(opts.title) + "</h1>" +
     (opts.subtitle ? '<p class="sub">' + escapeHtml(opts.subtitle) + "</p>" : "") +
     (opts.cta || "") +
-    "</div></section>"
+    "</div>" +
+    '<p class="hero-caption">KGSSEB offices, Lokoja</p>' +
+    "</section>"
   );
 }
 
@@ -94,7 +98,7 @@ async function renderListing(root) {
       cta: '<a class="hero-cta" href="#openings">View Openings</a>',
     }) +
     '<div class="wrap" id="openings"><div class="board">' +
-    '<aside><h3>Filters</h3><div class="filters" id="filters"></div></aside>' +
+    '<aside class="filters-col"><h3>Filters</h3><div class="filters" id="filters"></div></aside>' +
     '<section><h2>Join us</h2><p>Current Openings</p>' +
     '<div class="search-row"><label>What<input id="q" placeholder="Job title or skill"></label>' +
     '<label>Where<input id="where" placeholder="City or country"></label>' +
@@ -241,33 +245,21 @@ function authHeaders() {
 
 async function renderPortalLogin(root) {
   document.title = "Candidate portal · KGSSEB";
+  let emailReady = false;
+  try {
+    const res = await fetch(API + "/api/portal/status");
+    const env = await res.json();
+    emailReady = Boolean(env.data && env.data.emailReady);
+  } catch (e) {
+    emailReady = false;
+  }
+  const body = emailReady
+    ? '<form class="card form" id="login"><p class="meta">Enter the email you applied with. We will send a sign-in link.</p><input name="email" type="email" required placeholder="Email"><button class="primary" type="submit">Send link</button><p class="error hidden" id="login-error"></p></form>'
+    : '<div class="card portal-empty"><p class="portal-kicker">Candidate portal</p><h2>Login is not available yet</h2><p>A sign-in link will be emailed once outbound email is set up for this desk. Until then, apply on the job page and the team will contact you.</p><a class="primary" href="/jobs/" style="display:inline-block;text-decoration:none;margin-top:8px">Browse open roles</a></div>';
   root.innerHTML =
-    heroHtml({ compact: true, title: "Candidate portal", subtitle: "Use the email and last name from your application." }) +
-    '<div class="wrap" style="max-width:480px"><form class="card form" id="login">' +
-    '<input name="email" type="email" required placeholder="Email">' +
-    '<input name="last_name" required placeholder="Last name">' +
-    '<button class="primary" type="submit">Continue</button>' +
-    '<p class="error hidden" id="login-error"></p></form></div>' +
+    heroHtml({ compact: true, title: "Candidate portal", subtitle: emailReady ? "We will email you a sign-in link." : "Tracking opens when email is configured." }) +
+    '<div class="wrap portal-login">' + body + "</div>" +
     footerHtml();
-  document.getElementById("login").addEventListener("submit", async (ev) => {
-    ev.preventDefault();
-    const fd = new FormData(ev.target);
-    const err = document.getElementById("login-error");
-    try {
-      const res = await fetch(API + "/api/portal/session", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email: fd.get("email"), last_name: fd.get("last_name") }),
-      });
-      const env = await res.json();
-      if (!res.ok) throw new Error(env.message || "Could not sign in");
-      if (env.data && env.data.token) sessionStorage.setItem(TOKEN_KEY, env.data.token);
-      location.href = "/portal/home/";
-    } catch (e) {
-      err.textContent = e.message;
-      err.classList.remove("hidden");
-    }
-  });
 }
 
 async function renderPortalHome(root) {
@@ -291,11 +283,13 @@ async function renderPortalHome(root) {
   const initial = ((first[0] || "") + (last[0] || "")).toUpperCase() || "C";
   document.title = "Your applications · KGSSEB";
   root.innerHTML =
-    '<div class="portal-banner">' + navHtml() + "</div>" +
-    '<div class="wrap">' +
-    '<div class="avatar">' + escapeHtml(initial) + "</div>" +
-    "<h1>" + escapeHtml(first + " " + last) + "</h1>" +
-    '<p class="meta">' + escapeHtml(profile.email || "") + (profile.phone ? "<br>" + escapeHtml(profile.phone) : "") + "</p>" +
+    '<div class="portal-banner"><div class="hero-photo" style="background-image:url(\'' + defaultHero() + "')\"></div><div class=\"hero-wash\"></div>" +
+    navHtml() +
+    "</div>" +
+    '<div class="wrap portal-desk">' +
+    '<div class="portal-id"><div class="avatar">' + escapeHtml(initial) + "</div>" +
+    '<div><h1>' + escapeHtml((first + " " + last).trim() || "Candidate") + "</h1>" +
+    '<p class="meta">' + escapeHtml(profile.email || "") + (profile.phone ? "<br>" + escapeHtml(profile.phone) : "") + "</p></div></div>" +
     '<div class="layout"><aside class="card sidemenu">' +
     '<button class="on" data-tab="apps">Applications (' + apps.length + ")</button>" +
     '<button data-tab="profile">Profile</button>' +

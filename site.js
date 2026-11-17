@@ -30,10 +30,10 @@ function defaultHero() {
   return "/images/careers-hero.jpg";
 }
 
-function navHtml() {
+function navHtml(plate) {
   return (
     '<nav class="nav">' +
-    '<a class="nav-brand" href="/jobs/"><img src="/images/logo.jpg" alt="KGSSEB"></a>' +
+    '<a class="nav-brand' + (plate === false ? " bare" : "") + '" href="/jobs/"><img src="/images/logo.jpg" alt="KGSSEB"></a>' +
     '<div class="nav-links">' +
     '<a href="/jobs/">Home</a><a href="/jobs/">Jobs</a><a class="btn" href="/portal/">Portal</a>' +
     "</div></nav>"
@@ -47,14 +47,14 @@ function heroHtml(opts) {
     '<section class="hero' + (opts.compact ? " compact" : "") + '">' +
     '<div class="hero-photo" style="background-image:url(\'' + src + "')\"></div>" +
     '<div class="hero-wash"></div>' +
-    navHtml() +
+    navHtml(opts.plate) +
     '<div class="hero-inner">' +
     (opts.kicker ? "<p>" + escapeHtml(opts.kicker) + "</p>" : "") +
     "<h1>" + escapeHtml(opts.title) + "</h1>" +
     (opts.subtitle ? '<p class="sub">' + escapeHtml(opts.subtitle) + "</p>" : "") +
     (opts.cta || "") +
     "</div>" +
-    '<p class="hero-caption">KGSSEB offices, Lokoja</p>' +
+    (opts.caption ? '<p class="hero-caption">' + escapeHtml(opts.caption) + "</p>" : "") +
     "</section>"
   );
 }
@@ -92,6 +92,8 @@ async function renderListing(root) {
   root.innerHTML =
     heroHtml({
       content,
+      plate: content.logo_plate !== false,
+      caption: content.hero_caption || "KGSSEB offices, Lokoja",
       kicker: content.hero_kicker || "Kogi State Senior Secondary Education Board",
       title: "Join us",
       subtitle: content.subtitle || "Find a meaningful role and apply online.",
@@ -182,6 +184,8 @@ async function renderJob(root) {
     heroHtml({
       content,
       compact: true,
+      plate: content.logo_plate !== false,
+      caption: content.hero_caption || "KGSSEB offices, Lokoja",
       kicker: "KGSSEB" + (role.employment_type ? " | " + prettyType(role.employment_type) : ""),
       title: role.title,
       subtitle: [role.location, posted(role.date_created) ? "Posted on " + posted(role.date_created) : ""].filter(Boolean).join(" | "),
@@ -208,7 +212,7 @@ async function renderJob(root) {
     '<input name="phone" placeholder="Phone">' +
     '<input name="location" placeholder="Location">' +
     '<textarea name="experience" placeholder="A few lines about your experience"></textarea>' +
-    '<input name="cv" type="file" accept=".pdf,.doc,.docx">' +
+    '<label class="cv-field"><span>Résumé / CV</span><small>Upload a PDF, Word .doc, or .docx</small><input name="cv" type="file" accept=".pdf,.doc,.docx,application/pdf"></label>' +
     '<button class="primary" type="submit">Submit application</button>' +
     '<p class="error hidden" id="apply-error"></p></form></section></div>' +
     footerHtml();
@@ -257,7 +261,7 @@ async function renderPortalLogin(root) {
     ? '<form class="card form" id="login"><p class="meta">Enter the email you applied with. We will send a sign-in link.</p><input name="email" type="email" required placeholder="Email"><button class="primary" type="submit">Send link</button><p class="error hidden" id="login-error"></p></form>'
     : '<div class="card portal-empty"><p class="portal-kicker">Candidate portal</p><h2>Login is not available yet</h2><p>A sign-in link will be emailed once outbound email is set up for this desk. Until then, apply on the job page and the team will contact you.</p><a class="primary" href="/jobs/" style="display:inline-block;text-decoration:none;margin-top:8px">Browse open roles</a></div>';
   root.innerHTML =
-    heroHtml({ compact: true, title: "Candidate portal", subtitle: emailReady ? "We will email you a sign-in link." : "Tracking opens when email is configured." }) +
+    heroHtml({ compact: true, plate: true, caption: "KGSSEB offices, Lokoja", title: "Candidate portal", subtitle: emailReady ? "We will email you a sign-in link." : "Tracking opens when email is configured." }) +
     '<div class="wrap portal-login">' + body + "</div>" +
     footerHtml();
 }

@@ -36,6 +36,9 @@ a { color: inherit; }
   box-shadow: 0 10px 24px rgba(0,0,0,.16);
 }
 .nav-brand img { height: 40px; width: auto; display: block; }
+.nav-brand.bare { background: transparent; box-shadow: none; padding: 0; border-radius: 0; }
+.cv-field { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+.cv-field small { font-weight: 400; color: var(--muted); }
 .hero-caption {
   position: absolute;
   left: 24px;

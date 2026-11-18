@@ -105,3 +105,9 @@ a { color: inherit; }
 .footer a { color: var(--green); }
 .hidden { display: none !important; }
 .error { color: #b42318; font-size: 14px; }
+.result-count { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-top: 16px; color: var(--muted); font-size: 14px; }
+.result-count span { margin-left: auto; }
+.pager { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 28px; }
+.pager button { border: 1px solid #d0d5dd; background: #fff; color: var(--ink); border-radius: 8px; padding: 8px 11px; cursor: pointer; }
+.pager button.on { background: var(--green); border-color: var(--green); color: #fff; }
+.pager button:disabled { opacity: .4; cursor: not-allowed; }

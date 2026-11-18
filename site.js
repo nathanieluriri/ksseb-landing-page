@@ -86,6 +86,8 @@ async function renderListing(root) {
   const data = await loadWidget();
   const content = (data.widget && data.widget.content) || {};
   const roles = data.roles || [];
+  const pageSize = 12;
+  let page = 1;
   document.title = "Jobs at KGSSEB";
   injectJsonLd({
     "@context": "https://schema.org",
@@ -109,7 +111,8 @@ async function renderListing(root) {
     '<div class="search-row"><label>What<input id="q" placeholder="Job title or skill"></label>' +
     '<label>Where<input id="where" placeholder="City or country"></label>' +
     '<button type="button" id="search">Search</button></div>' +
-    '<ul class="jobs" id="jobs"></ul></section></div></div>' +
+    '<div class="result-count" id="result-count"></div>' +
+    '<ul class="jobs" id="jobs"></ul><nav class="pager" id="pager" aria-label="Job pages"></nav></section></div></div>' +
     footerHtml();
 
   const types = unique(roles.map((r) => r.employment_type).filter(Boolean));
@@ -117,7 +120,8 @@ async function renderListing(root) {
   document.getElementById("filters").innerHTML =
     group("Job Type", types, "type") + group("City", cities, "city");
 
-  function paint() {
+  function paint(resetPage) {
+    if (resetPage) page = 1;
     const q = (document.getElementById("q").value || "").toLowerCase();
     const where = (document.getElementById("where").value || "").toLowerCase();
     const typeOn = checked("type");
@@ -130,7 +134,17 @@ async function renderListing(root) {
       if (cityOn.length && cityOn.indexOf(role.location) < 0) return false;
       return true;
     });
+    const totalVacancies = list.reduce((sum, role) => sum + Math.max(0, (role.vacancies_total || 1) - (role.vacancies_filled || 0)), 0);
+    const pageCount = Math.max(1, Math.ceil(list.length / pageSize));
+    page = Math.min(page, pageCount);
+    const start = list.length ? (page - 1) * pageSize + 1 : 0;
+    const end = Math.min(page * pageSize, list.length);
+    document.getElementById("result-count").innerHTML =
+      "<strong>" + list.length + "</strong> opening" + (list.length === 1 ? "" : "s") +
+      " · " + totalVacancies.toLocaleString() + " estimated vacancies" +
+      (list.length ? "<span>Showing " + start + "–" + end + " of " + list.length + "</span>" : "");
     document.getElementById("jobs").innerHTML = list
+      .slice((page - 1) * pageSize, page * pageSize)
       .map((role) => {
         return (
           '<li><a href="' + jobUrl(role.id) + '"><h3>' + escapeHtml(role.title) + "</h3>" +
@@ -140,10 +154,26 @@ async function renderListing(root) {
         );
       })
       .join("");
+    const pager = document.getElementById("pager");
+    pager.innerHTML = pageCount > 1
+      ? '<button type="button" data-page="prev" ' + (page <= 1 ? "disabled" : "") + '>← Previous</button>' +
+        Array.from({ length: pageCount }, (_, i) => '<button type="button" data-page="' + (i + 1) + '" class="' + (page === i + 1 ? "on" : "") + '">' + (i + 1) + "</button>").join("") +
+        '<button type="button" data-page="next" ' + (page >= pageCount ? "disabled" : "") + '>Next →</button>'
+      : "";
   }
-  root.addEventListener("input", paint);
-  document.getElementById("search").addEventListener("click", paint);
-  paint();
+  root.addEventListener("input", () => paint(true));
+  document.getElementById("search").addEventListener("click", () => paint(true));
+  document.getElementById("pager").addEventListener("click", (ev) => {
+    const target = ev.target.closest("button[data-page]");
+    if (!target || target.disabled) return;
+    const value = target.getAttribute("data-page");
+    if (value === "prev") page -= 1;
+    else if (value === "next") page += 1;
+    else page = Number(value);
+    paint(false);
+    document.getElementById("openings").scrollIntoView({ behavior: "smooth" });
+  });
+  paint(false);
 }
 
 function unique(items) {

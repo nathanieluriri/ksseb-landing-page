@@ -25,7 +25,7 @@ function vacancyText(role) {
 }
 
 async function loadWidget() {
-  const res = await fetch(API + "/api/public/widgets/" + WIDGET_ID);
+  const res = await fetch(API + "/api/public/widgets/" + WIDGET_ID + "?all=1", { cache: "no-store" });
   const env = await res.json();
   return env.data || { widget: {}, roles: [] };
 }

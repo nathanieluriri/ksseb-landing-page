@@ -19,6 +19,10 @@ function posted(value) {
 function jobUrl(id) {
   return "/job/?id=" + encodeURIComponent(id);
 }
+function vacancyText(role) {
+  const left = Math.max(0, (role.vacancies_total || 1) - (role.vacancies_filled || 0));
+  return left + (left === 1 ? " vacancy" : " vacancies");
+}
 
 async function loadWidget() {
   const res = await fetch(API + "/api/public/widgets/" + WIDGET_ID);
@@ -130,7 +134,7 @@ async function renderListing(root) {
       .map((role) => {
         return (
           '<li><a href="' + jobUrl(role.id) + '"><h3>' + escapeHtml(role.title) + "</h3>" +
-          '<p class="meta">' + escapeHtml([role.location, prettyType(role.employment_type)].filter(Boolean).join(" · ")) + "</p>" +
+          '<p class="meta">' + escapeHtml([role.location, prettyType(role.employment_type), vacancyText(role)].filter(Boolean).join(" · ")) + "</p>" +
           (snippet(role.description) ? '<p class="blurb">' + escapeHtml(snippet(role.description)) + "</p>" : "") +
           "</a></li>"
         );
@@ -202,6 +206,7 @@ async function renderJob(root) {
     '</article><aside class="side"><h2>Job Information</h2>' +
     info("Date Opened", posted(role.date_created)) +
     info("Job Type", prettyType(role.employment_type)) +
+    info("Vacancies", vacancyText(role) + " of " + (role.vacancies_total || 1)) +
     info("Department", role.department) +
     info("City", role.location) +
     "</aside></div>" +
